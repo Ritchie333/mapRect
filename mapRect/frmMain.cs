@@ -45,10 +45,7 @@ namespace MapRect
 			Point current = _tracks.Peek();
 			Point next = new Point();
 			if ( current.X == _config.Horizontal.End ) {
-				int nextY = current.Y - ( _config.Vertical.Every - ( current.Y % _config.Vertical.Every ) );
-				if( current.Y == _config.Vertical.Start && ( current.Y % _config.Vertical.Every > 0 ) ) {
-					nextY = current.Y - ( current.Y % _config.Vertical.Every );
-				}
+				int nextY = current.Y - ( _config.Vertical.Every - ( current.Y % _config.Vertical.Every ) );				
 				if ( nextY < _config.Vertical.End ) {
 					nextY = _config.Vertical.End;
 				}
