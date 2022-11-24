@@ -15,16 +15,56 @@ namespace MapRect
 			InitializeComponent();
 		}
 
+		public void Init( Configuration config )
+		{
+			if ( config != null ) {
+
+				SetConfigValue( txtHorizStart, config.Horizontal.Start );
+				SetConfigValue( txtHorizRepeat, config.Horizontal.Every );
+				SetConfigValue( txtHorizEnd, config.Horizontal.End );
+
+				SetConfigValue( txtVertStart, config.Vertical.Start );
+				SetConfigValue( txtVertRepeat, config.Vertical.Every );
+				SetConfigValue( txtVertEnd, config.Vertical.End );
+			} else {
+				ClearValues();
+			}
+		}
+
 		public Configuration Config
 		{
 			get
 			{
-				ConfigurationEntry horiz = new ConfigurationEntry( Convert.ToInt32( txtHorizStart.Text ),
-						Convert.ToInt32( txtHorizRepeat.Text ), Convert.ToInt32( txtHorizEnd.Text ) );
-				ConfigurationEntry vert = new ConfigurationEntry( Convert.ToInt32( txtVertStart.Text ),
-						Convert.ToInt32( txtVertRepeat.Text ), Convert.ToInt32( txtVertEnd.Text ) );
+				ConfigurationEntry horiz = new ConfigurationEntry( GetConfigValue( txtHorizStart ),
+						GetConfigValue( txtHorizRepeat ), GetConfigValue( txtHorizEnd ) );
+				ConfigurationEntry vert = new ConfigurationEntry( GetConfigValue( txtVertStart ),
+						GetConfigValue( txtVertRepeat ), GetConfigValue( txtVertEnd ) );
 				return new Configuration( horiz, vert );
 			}
+		}
+
+		private int GetConfigValue( TextBox box )
+		{
+			if( !string.IsNullOrEmpty( box.Text ) ) {
+				return Convert.ToInt32( box.Text );
+			} else {
+				return 0;
+			}
+		}
+
+		private void SetConfigValue( TextBox box, int value )
+		{
+			if( value > 0 ) {
+				box.Text = value.ToString();
+			} else {
+				box.Text = string.Empty;
+			}
+		}
+
+		private void ClearValues()
+		{
+			Array.ForEach( new TextBox[] { txtHorizStart, txtHorizRepeat, txtHorizEnd, txtVertStart, txtVertRepeat, txtVertEnd },
+						( box ) => { box.Text = string.Empty; } );
 		}
 
 		private void OnTextChanged( object sender, EventArgs e )
@@ -44,6 +84,11 @@ namespace MapRect
 		private void cmdOK_Click( object sender, EventArgs e )
 		{
 			Close();
-		}	
+		}
+
+		private void cmdClear_Click( object sender, EventArgs e )
+		{
+			ClearValues();
+		}
 	}
 }
