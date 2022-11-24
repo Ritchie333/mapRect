@@ -21,11 +21,16 @@ namespace MapRect
 		{
 			OpenFileDialog dialog = new OpenFileDialog();
 			if ( dialog.ShowDialog() == DialogResult.OK ) {
+				_fileName = dialog.FileName;
 				this.Cursor = Cursors.WaitCursor;
-				picMap.Image = Image.FromFile( dialog.FileName );
+				picMap.Image = Image.FromFile( _fileName );
+				Text = "Map point tracker - " + _fileName;
 				this.Cursor = Cursors.Default;
 				_points.Clear();
 				_tracks.Clear();
+				if( _config != null && _config.Horizontal.Start > 0 && _config.Vertical.Start > 0 ) {
+					_tracks.Push( new Point( _config.Horizontal.Start, _config.Vertical.Start ) );
+				}
 			}
 		}
 
@@ -71,7 +76,7 @@ namespace MapRect
 			string text = string.Empty;
 			if ( useConfig && _config != null && _tracks.Count > 0 ) {
 				Point current = _tracks.Peek();
-				text = string.Format( "os,{0},{1},{2},{3}", current.X, current.Y, p.X, p.Y );				
+				text = string.Format( "os,{0}:{1},{2},{3}", current.X, current.Y, p.X, p.Y );				
 			} else {
 				text = string.Format( "{0},{1}", p.X, p.Y );
 			}
@@ -142,6 +147,10 @@ namespace MapRect
 		private void cmdSave_Click( object sender, EventArgs e )
 		{
 			SaveFileDialog dialog = new SaveFileDialog();
+			if ( !string.IsNullOrEmpty( _fileName ) ) {
+				dialog.FileName = Path.GetFileNameWithoutExtension( _fileName ) + ".csv";
+				dialog.DefaultExt = "csv";
+			}
 			if ( DialogResult.OK == dialog.ShowDialog() ) {
 				try {
 					using ( StreamWriter writer = new StreamWriter( dialog.FileName ) ) {
@@ -176,5 +185,7 @@ namespace MapRect
 		private Stack<Point> _points;
 
 		private Configuration _config;
+
+		private string _fileName;
 	}
 }
